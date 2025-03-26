@@ -234,7 +234,7 @@ SRCS := main.c \
         create_token.c token_to_list.c \
         kill_shell.c shell_init.c shell_utils.c \
         handler_hrdc.c handler_nrml.c init_signals.c \
-        print_logo.c msg.c print_shell.c
+        print_logo.c msg.c print_shell.c list_functions.c
 
 OBJS := $(addprefix $(OBJ_DIR)/, $(SRCS:%.c=%.o))
 

@@ -25,6 +25,7 @@ typedef struct s_node
 	char **filename;
 	char **redirections;
 	struct s_node *next;
+	struct s_node *prev;
 } t_node;
 
 /*
@@ -49,7 +50,7 @@ typedef struct s_mini
 	char *input;
 	char **tokens;
 	char **env;
-	t_node *node;
+	t_node *node_list;
 	t_list *list;
 } t_mini;
 
