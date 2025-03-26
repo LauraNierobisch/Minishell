@@ -24,6 +24,7 @@ typedef struct s_node
 	char *args;
 	char **filename;
 	char **redirections;
+	bool pipe_flag;
 	struct s_node *next;
 	struct s_node *prev;
 } t_node;

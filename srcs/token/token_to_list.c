@@ -250,32 +250,127 @@ void process_redirection_token(t_node *new_node, t_list **token_lst)
 // }
 
 //mit verketter liste
+// t_node *parse_tokens(t_list **token_lst)
+// {
+//     t_node *new_node = create_new_node();
+//     if (!new_node)
+//         return NULL;
+
+//     bool prev_was_redirect = false; // 🟢 Merkt sich, ob der vorherige Token ein Redirect war
+
+//     while (*token_lst && ((t_token *)(*token_lst)->content)->type != PIPE)
+//     {
+//         t_token *token = (t_token *)(*token_lst)->content;
+//         if (token->type == WORD || token->type == DOUBLEQUOTED || token->type == SINGLEQUOTED)
+//             process_word_token(&new_node, token_lst, &prev_was_redirect);  // Passieren die Liste durch Referenz weiter
+//         else if (token->type == REDIR_IN || token->type == REDIR_OUT || token->type == HEREDOC || token->type == APPEND)
+//         {
+//             process_redirection_token(new_node, token_lst);
+//             prev_was_redirect = true;  // 🟢 Nach einem Redirect merken wir uns das
+//         }
+//         else
+//         {
+//             *token_lst = (*token_lst)->next;
+//             prev_was_redirect = false; // 🟢 Falls etwas anderes kommt, zurücksetzen
+//         }
+//         if (*token_lst && ((t_token *)(*token_lst)->content)->type == PIPE)
+//     {
+//         new_node->pipe_flag = true;
+//         *token_lst = (*token_lst)->next; // Pipe überspringen
+//     }
+//     else
+//     {
+//         new_node->pipe_flag = false;
+//     }
+//     }
+//     return new_node;
+// }
+// t_node *parse_tokens(t_list **token_lst)
+// {
+//     t_node *new_node = create_new_node();
+//     if (!new_node)
+//         return NULL;
+
+//     bool prev_was_redirect = false; // 🟢 Merkt sich, ob der vorherige Token ein Redirect war
+
+//     while (*token_lst && ((t_token *)(*token_lst)->content)->type != PIPE)
+//     {
+//         t_token *token = (t_token *)(*token_lst)->content;
+//         if (token->type == WORD || token->type == DOUBLEQUOTED || token->type == SINGLEQUOTED)
+//             process_word_token(&new_node, token_lst, &prev_was_redirect);  
+//         else if (token->type == REDIR_IN || token->type == REDIR_OUT || token->type == HEREDOC || token->type == APPEND)
+//         {
+//             process_redirection_token(new_node, token_lst);
+//             prev_was_redirect = true;  
+//         }
+//         else
+//         {
+//             *token_lst = (*token_lst)->next;
+//             prev_was_redirect = false; 
+//         }
+//     }
+
+//     // 🟢 Falls eine Pipe folgt, wird `pipe_flag` gesetzt und die Pipe übersprungen
+//     if (*token_lst && ((t_token *)(*token_lst)->content)->type == PIPE)
+//     {
+//         new_node->pipe_flag = true;
+//         *token_lst = (*token_lst)->next; // Pipe überspringen
+//     }
+//     else
+//     {
+//         new_node->pipe_flag = false;
+//     }
+
+//     return new_node;
+// }
+
+//falsch ich will nur ein token vor jeder pipe und das essich bei der pipe zu einem neuen node spaltet macht aber beijedem token einen neuen node 
 t_node *parse_tokens(t_list **token_lst)
 {
     t_node *new_node = create_new_node();
     if (!new_node)
         return NULL;
 
-    bool prev_was_redirect = false; // 🟢 Merkt sich, ob der vorherige Token ein Redirect war
+    bool prev_was_redirect = false;
 
     while (*token_lst && ((t_token *)(*token_lst)->content)->type != PIPE)
     {
         t_token *token = (t_token *)(*token_lst)->content;
+
+        // Speichere das Token im args-Feld des new_node
         if (token->type == WORD || token->type == DOUBLEQUOTED || token->type == SINGLEQUOTED)
-            process_word_token(&new_node, token_lst, &prev_was_redirect);  // Passieren die Liste durch Referenz weiter
+        {
+            process_word_token(&new_node, token_lst, &prev_was_redirect);  
+            new_node->args = token->token_value;  // Hier das Token ins args speichern
+        }
         else if (token->type == REDIR_IN || token->type == REDIR_OUT || token->type == HEREDOC || token->type == APPEND)
         {
             process_redirection_token(new_node, token_lst);
-            prev_was_redirect = true;  // 🟢 Nach einem Redirect merken wir uns das
+            prev_was_redirect = true;  
         }
         else
         {
             *token_lst = (*token_lst)->next;
-            prev_was_redirect = false; // 🟢 Falls etwas anderes kommt, zurücksetzen
+            prev_was_redirect = false; 
+        }
+
+        if (*token_lst && ((t_token *)(*token_lst)->content)->type == PIPE)
+        {
+            new_node->pipe_flag = true;
+            *token_lst = (*token_lst)->next; // Pipe überspringen
+        }
+        else
+        {
+            new_node->pipe_flag = false;
         }
     }
+
     return new_node;
 }
+
+
+
+
 
 // ohne verkette liste 
 // void build_parsing_nodes(t_shell *shell)
@@ -360,6 +455,7 @@ void print_node_list(t_node *node_list)
         {
             printf("NULL");
         }
+        printf("  Has Pipe After: %s\n", current-> pipe_flag ? "YES" : "NO");
         printf("\n\n");
 
         current = current->next;
