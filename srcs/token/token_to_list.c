@@ -367,7 +367,33 @@ t_node *parse_tokens(t_list **token_lst)
 
     return new_node;
 }
+// so soll es aussehen:
 
+// echo "Hallo" | cat | grep "H" | wc -l
+
+// Node 0:
+//   args: echo, "Hallo"
+//   filename: NULL
+//   redirections: NULL
+//   Has Pipe After: YES
+
+// Node 1:
+//   args: cat
+//   filename: NULL
+//   redirections: NULL
+//   Has Pipe After: YES
+
+// Node 2:
+//   args: grep, "H"
+//   filename: NULL
+//   redirections: NULL
+//   Has Pipe After: YES
+
+// Node 3:
+//   args: wc -l
+//   filename: NULL
+//   redirections: NULL
+//   Has Pipe After: NO
 
 
 
